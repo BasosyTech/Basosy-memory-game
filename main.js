@@ -66,7 +66,7 @@ scoresBoardContent.addEventListener("click", (e) => {
         hard: [],
       };
       try {
-        localStorage.removeItem("scores");
+        localStorage.removeItem("memoryGameScores");
       } catch (error) {
         console.warn("Unable to clear results:", error);
       }
@@ -178,7 +178,7 @@ const sounds = {
 };
 setupSounds();
 preloadImage(baseTechnologies);
-let bestScores = JSON.parse(localStorage.getItem("scores")) || {
+let bestScores = JSON.parse(localStorage.getItem("memoryGameScores")) || {
   easy: [],
   normal: [],
   hard: [],
@@ -498,7 +498,7 @@ function saveScore() {
   scores.sort((a, b) => a.wrongTries - b.wrongTries || a.rawTimer - b.rawTimer);
   scores.length = Math.min(scores.length, 10);
   try {
-    localStorage.setItem("scores", JSON.stringify(bestScores));
+    localStorage.setItem("memoryGameScores", JSON.stringify(bestScores));
   } catch (error) {
     console.warn("Unable to save the results:", error);
   }

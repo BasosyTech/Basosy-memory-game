@@ -44,7 +44,7 @@ Coming Soon...
 
 ### Start Menu & Leaderboard & finish Message
 ![Start Menu](screenshots/start.webp)
-![Leaderboard](screenshots/leadrboard.webp)
+![Leaderboard](screenshots/Leaderboard.webp)
 ![finish Message](screenshots/finish.webp)
 
 

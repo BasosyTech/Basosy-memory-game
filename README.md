@@ -8,7 +8,7 @@ Players match pairs of technology cards before running out of time or exceeding 
 
 ## 🎮 Live Demo
 
-Coming Soon...
+https://basosytech.github.io/Basosy-memory-game/
 
 ---
 

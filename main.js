@@ -169,12 +169,12 @@ const gameState = {
   skipCongratsRedirect: false,
 };
 const sounds = {
-  background: new Audio(`sounds/background.mp3`),
-  match: new Audio(`sounds/match.mp3`),
-  wrong: new Audio(`sounds/wrong.mp3`),
-  win: new Audio(`sounds/win.mp3`),
-  lose: new Audio(`sounds/lose.mp3`),
-  finish: new Audio(`sounds/finish.mp3`),
+  background: new Audio(`sounds/background.MP3`),
+  match: new Audio(`sounds/match.MP3`),
+  wrong: new Audio(`sounds/wrong.MP3`),
+  win: new Audio(`sounds/win.MP3`),
+  lose: new Audio(`sounds/lose.MP3`),
+  finish: new Audio(`sounds/finish.MP3`),
 };
 setupSounds();
 preloadImage(baseTechnologies);

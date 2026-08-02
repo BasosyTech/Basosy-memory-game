@@ -137,24 +137,24 @@ const gameConfig = {
   levelsObjs: {
     easy: {
       timer: 120,
-      tries: 20,
-      duration: 1000,
+      tries: 16,
+      mismatchDelay: 1000,
       rules:
         "Relax and train your memory! You have 120 seconds and up to 20 mistakes. Unmatched cards remain visible for 1 second.",
     },
     normal: {
       timer: 90,
-      tries: 15,
-      duration: 800,
+      tries: 13,
+      mismatchDelay: 800,
       rules:
         "A balanced challenge! You have 90 seconds to finish with a maximum of 15 mistakes. Unmatched cards remain visible for 0.8 seconds.",
     },
     hard: {
       timer: 60,
-      tries: 12,
-      duration: 600,
+      tries: 10,
+      mismatchDelay: 600,
       rules:
-        "A real challenge! You only have 60 seconds and a strict limit of 12 mistakes. Unmatched cards disappear quickly after 0.5 seconds.",
+        "A real challenge! You only have 60 seconds and a strict limit of 12 mistakes. Unmatched cards disappear quickly after 0.6 seconds.",
     },
   },
 };
@@ -205,6 +205,7 @@ function generateBlocks() {
     let backFace = document.createElement("div");
     let img = document.createElement("img");
     cardBlock.classList.add("game-block");
+    cardBlock.classList.add("is-flipped");
     innerWrapper.classList.add("inner");
     cardBlock.dataset.technology = technology;
     frontFace.className = "face front";
@@ -233,7 +234,7 @@ function stopClicking() {
   blocksContainer.classList.add("no-clicking");
   gameState.clickingTimeout = setTimeout(() => {
     blocksContainer.classList.remove("no-clicking");
-  }, gameConfig.levelsObjs[gameState.currLevel].duration);
+  }, gameConfig.levelsObjs[gameState.currLevel].mismatchDelay);
 }
 function checkCurrentBlocks(firstBlock, secondBlock) {
   if (firstBlock.dataset.technology === secondBlock.dataset.technology) {
@@ -259,7 +260,7 @@ function checkCurrentBlocks(firstBlock, secondBlock) {
     setTimeout(() => {
       firstBlock.classList.remove("is-flipped");
       secondBlock.classList.remove("is-flipped");
-    }, gameConfig.levelsObjs[gameState.currLevel].duration);
+    }, gameConfig.levelsObjs[gameState.currLevel].mismatchDelay);
   }
 }
 function outerCheckInput(e) {
@@ -269,17 +270,10 @@ function innerCheckInputFunc(inputField) {
   let regex =
     /^[a-zA-Z\u0621-\u064A][a-zA-Z0-9\u0621-\u064A]*( [a-zA-Z0-9\u0621-\u064A]+)*$/;
   let isItValid = regex.test(inputField.value);
-  let isFound = bestScores.easy.some(
-    (score) => score.name.toLowerCase() === inputField.value.toLowerCase(),
-  );
-  if (inputField.value === "" || !isItValid || isFound) {
+  if (inputField.value === "" || !isItValid) {
     inputField.classList.add("wrong");
     inputHint.textContent =
-      inputField.value === ""
-        ? "Enter your name"
-        : !isItValid
-          ? "Enter a valid name"
-          : "This name is already taken";
+      inputField.value === "" ? "Enter your name" : "Enter a valid name";
     inputHint.classList.add("show");
     inputField.removeEventListener("blur", outerCheckInput);
     return false;
@@ -291,40 +285,44 @@ function innerCheckInputFunc(inputField) {
   inputField.removeEventListener("blur", outerCheckInput);
   return true;
 }
-function showLevelrules() {
+function showLevelRules() {
   levelRuleElement.textContent =
     gameConfig.levelsObjs[gameState.currLevel].rules;
   levelRuleElement.show();
   levelRuleElement.classList.add("show");
   setTimeout(() => {
+    levelRuleElement.classList.remove("show");
+    cards.forEach((card) => card.classList.remove("is-flipped"));
     levelRuleElement.addEventListener(
       "transitionend",
       (e) => {
         e.currentTarget.close();
+        setTimeout(() => {
+          startReadyCountdown();
+        }, 200);
       },
       { once: true },
     );
-    levelRuleElement.classList.remove("show");
-    readyFunc();
-  }, 3000);
+  }, 2000);
 }
-function readyFunc() {
+function startReadyCountdown() {
   let ready = readyWrapper.querySelector(".ready");
   readyWrapper.classList.remove("hidden");
   playSound(sounds.background);
-  ready.textContent = "3";
-  let readyCounter = setInterval(() => {
-    ready.textContent--;
-    if (ready.textContent === "0") {
-      clearInterval(readyCounter);
-      ready.textContent = "Start";
-      setTimeout(() => {
-        readyWrapper.classList.add("hidden");
-        blocksContainer.classList.remove("no-clicking");
-        startGame();
-      }, 900);
+  let currentCount = 3;
+  ready.textContent = currentCount;
+  function handleAnimationCycle() {
+    currentCount--;
+    if (currentCount > 0) ready.textContent = currentCount;
+    else if (currentCount === 0) ready.textContent = "Start";
+    else {
+      ready.removeEventListener("animationiteration", handleAnimationCycle);
+      readyWrapper.classList.add("hidden");
+      blocksContainer.classList.remove("no-clicking");
+      startGame();
     }
-  }, 1000);
+  }
+  ready.addEventListener("animationiteration", handleAnimationCycle);
 }
 function startGame() {
   gameState.countDown = gameConfig.levelsObjs[gameState.currLevel].timer;
@@ -433,7 +431,7 @@ function setupLevel(isNextLevel = false) {
   blocksContainer.classList.add("no-clicking");
   shuffle(technologies);
   generateBlocks();
-  showLevelrules();
+  showLevelRules();
 }
 function transitionToCongrats() {
   gameSection.classList.add("hidden");

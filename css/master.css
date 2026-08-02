@@ -667,7 +667,11 @@ dialog.modal::backdrop {
   10% {
     opacity: 1;
   }
+  85% {
+    opacity: 1;
+  }
   100% {
+    opacity: 0;
     transform: translate3d(-50%, -50%, 320px);
   }
 }
